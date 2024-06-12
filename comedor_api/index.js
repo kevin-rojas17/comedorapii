@@ -14,13 +14,17 @@ app.get('/comedor', async(req, res)=>{
   const comedor = await comedorModel.find({});
   res.json( comedor );
 });
-app.get('/comedor/:cuposComedor', async(req, res)=>{
-  const comedor = await comedorModel.find({cuposComedor:req.params.cuposComedor});
+// Obtener un registro de comedor por nombreAdmin
+app.get('/comedor/:nombreAdmin', async (req, res) => {
   try {
-    res.json( comedor[0] );
+    const comedor = await comedorModel.findOne({ nombreAdmin: req.params.nombreAdmin });
+    if (!comedor) {
+      return res.status(404).json({ message: 'Comedor not found' });
+    }
+    res.json(comedor);
   } catch (error) {
-    console.log('Error', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('Error fetching comedor:', error);
+    res.status(500).json({ message: ' server error' });
   }
 });
 app.post('/comedor', async(req, res)=>{
@@ -31,7 +35,7 @@ app.post('/comedor', async(req, res)=>{
     usuarioComedor = await userService.get(nombreAdmin);
     if(! usuarioComedor )  throw ("Usuario no Registrado");
 
-    const comedor = new internadoModel({ nombre, apeliido, numeroTelefono, nombreAdmin});
+    const comedor = new comedorModel({ nombre, apeliido, numeroTelefono, nombreAdmin});
     const data = await comedor.save();
     return res.status(201).json(data);
   } catch (error) {
