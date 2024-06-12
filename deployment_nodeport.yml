@@ -1,0 +1,76 @@
+# Service and Deployment for comedor_api
+apiVersion: v1
+kind: Service
+metadata:
+  name: comedor-api-service
+spec:
+  type: NodePort
+  selector:
+    app: comedor-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30072
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comedor-api-deployment
+  labels:
+    app: comedor-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: comedor-api
+  template:
+    metadata:
+      labels:
+        app: comedor-api
+    spec:
+      containers:
+        - name: comedor-api-container
+          image: "905418128847.dkr.ecr.us-east-2.amazonaws.com/comedor_api:comedor_api"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+
+# Service and Deployment for usuarios_api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usuarios-api-service
+spec:
+  type: NodePort
+  selector:
+    app: usuarios-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30073
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usuarios-api-deployment
+  labels:
+    app: usuarios-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usuarios-api
+  template:
+    metadata:
+      labels:
+        app: usuarios-api
+    spec:
+      containers:
+        - name: usuarios-api-container
+          image: "905418128847.dkr.ecr.us-east-2.amazonaws.com/comedor_api:usuarios_api"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
